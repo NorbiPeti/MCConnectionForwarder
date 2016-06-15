@@ -9,8 +9,6 @@ namespace Connection_forwarder
 {
     class PCPackets
     {
-        //public static List<PCPacket> Packets = new List<PCPacket>();
-        //public static readonly Dictionary<string, byte> PacketNames = new Dictionary<string, byte>();
         /*                    http://wiki.vg/Pre-release_protocol                    */
         /// <summary>
         /// <para>Gamemode	 Unsigned Byte	 0: survival, 1: creative, 2: adventure. Bit 3 (0x8) is the hardcore flag</para>
@@ -139,13 +137,6 @@ namespace Connection_forwarder
 
         public PCPackets(byte packetid, object[] data, Socket sock)
         {
-            //Prepare all possible packets
-            //Packets.Add(new PCPacket(0x02, "Chat"));
-            //Packets[0].Function = Packets[0].Callback;
-            /*Packets[0].Function = delegate(object[] asd)
-            {
-                return;
-            };*/
             var tmp=new List<byte>();
             tmp.Add(packetid);
             for(int i=0; i<data.Length; i++)
@@ -174,24 +165,4 @@ namespace Connection_forwarder
             sock.Send(tmp.ToArray());
         }
     }
-    /*class PCPacket
-    {
-        public byte PacketID { get; private set; }
-        public object[] Contents { get; set; }
-        public string PacketName { get; private set; }
-        internal delegate void FunctionT(params object[] asd);
-        public FunctionT Function;
-
-        //public PCPacket(byte packetid, params object[] contents)
-        public PCPacket(byte packetid, string packetname)
-        {
-            PacketID = packetid;
-            PacketName = packetname;
-        }
-
-        internal bool Callback(Type[] types, object[] parameters)
-        {
-            return true;
-        }
-    }*/
 }

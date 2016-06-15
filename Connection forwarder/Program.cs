@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -29,11 +30,15 @@ namespace Connection_forwarder
             {
                 if (ip.AddressFamily == AddressFamily.InterNetwork)
                 {
-                    //localIP = ip.ToString();
                     localIP = ip;
                 }
             }
             return localIP;
         }
+        /// <summary>
+        //// Int64: ClientID
+        /// IP
+        /// </summary>
+        public static Dictionary<IPEndPoint, Object[]> ConnThreads = new Dictionary<IPEndPoint, Object[]>();
     }
 }

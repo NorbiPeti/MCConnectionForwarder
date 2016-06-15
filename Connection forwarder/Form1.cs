@@ -17,19 +17,18 @@ namespace Connection_forwarder
     {
         public static int PortNumber;
         public static int PortNumber2;
-        public static bool PEVersion;
-        public static List<Thread> Threads = new List<Thread>();
+        //public static bool PEVersion;
+        //public static List<Thread> Threads = new List<Thread>();
 
         public Form1()
         {
             InitializeComponent();
-            Threads.Add(Thread.CurrentThread);
+            //Threads.Add(Thread.CurrentThread);
         }
 
         private void startbtn_Click(object sender, EventArgs e)
         {
             var s = new Socket(SocketType.Stream, ProtocolType.Tcp);
-            //s.Connect("localhost", Int32.Parse(portBox.Text));
             s.Bind(new IPEndPoint(IPAddress.Parse("127.0.0.1"), Int32.Parse(portBox.Text)));
             s.Listen(2);
             s = s.Accept();
@@ -45,25 +44,13 @@ namespace Connection_forwarder
         {
             PortNumber = Int32.Parse(portBox.Text);
             PortNumber2 = Int32.Parse(portBox2.Text);
-            PEVersion = radioButton2.Checked;
+            //PEVersion = radioButton2.Checked;
             new Thread(new ThreadStart(ListenThread.Run)).Start();
             startforwardbtn.Enabled = false;
         }
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
-            /*for (int i = 1; i < Threads.Count; i++) //For a fairly long time it stopped itself, now it skips that...
-            {
-                try
-                {
-                    Threads[i].Abort();
-                }
-                catch
-                {
-                }
-            }
-            Application.Exit();
-            Application.ExitThread();*/
             Environment.Exit(0);
         }
     }

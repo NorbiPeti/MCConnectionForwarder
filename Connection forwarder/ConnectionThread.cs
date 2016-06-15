@@ -6,84 +6,72 @@ using System.Text;
 using System.Threading.Tasks;
 using Cyotek.Data.Nbt;
 using System.Threading;
+using System.Net;
 
 namespace Connection_forwarder
 {
     class ClientConnectionThread
     {
-        public void Run(object sckt)
+        public Int64 ClientID;
+        public bool DataChanged = false;
+        public byte[] DataBuffer;
+        public void Run(object obj)
         {
-            Thread.CurrentThread.Name = "ConnectionThread";
-            Form1.Threads.Add(Thread.CurrentThread);
-            //var connsocket = ((Socket[])sckt)[0];
-            object connsocket;
-            if (!Form1.PEVersion)
-                connsocket = ((object[])sckt)[0] as Socket;
-            else
-                connsocket = ((UdpClient)((object[])sckt)[0]);
-            //var serversock = new Socket(SocketType.Stream, ProtocolType.Tcp);
-            //serversock.Connect("localhost", Form1.PortNumber);
-            //while (connsocket.Available > 0)
-            var serversock = ((Socket)((object[])sckt)[1]);
-            //new NetworkStream(connsocket).CopyToAsync(new NetworkStream(serversock));
-            //new NetworkStream(serversock).CopyTo(new NetworkStream(connsocket));
-            if (!Form1.PEVersion)
+            Thread.CurrentThread.Name = "ClientConnectionThread";
+            //Form1.Threads.Add(Thread.CurrentThread);
+            //IPEndPoint RemoteIP = (IPEndPoint)remip;
+            IPEndPoint RemoteIP = (IPEndPoint)((object[])obj)[0];
+            UdpClient connection = (UdpClient)((object[])obj)[1];
+            ClientID = (Int64)((object[])obj)[2];
+            //Program.ConnThreads.Add(ClientID, new object[] { Thread.CurrentThread, this }); //Remove it over time
+            Program.ConnThreads.Add(RemoteIP, new object[] { Thread.CurrentThread, this }); //Remove it over time
+            //UdpClient listenclient;
+            //byte[] buffer;
+            //bool brvar = false;
+            //UdpClient sendsocket;
+            var lasttick = Environment.TickCount;
+            while (Environment.TickCount - lasttick < 60 * 1000)
             {
-                try
-                {
-                    new NetworkStream(connsocket as Socket).CopyTo(new NetworkStream(serversock));
+                if (DataChanged)
+                { //Now DataBuffer contains the received packet
+                    Console.WriteLine("Data changed...");
+                    Console.WriteLine("PacketID: 0x{0:X}", DataBuffer[0]);
+                    lasttick = Environment.TickCount;
+                    DataChanged = false; //Finished working
                 }
-                catch { }
-                (connsocket as Socket).Close();
-                serversock.Close();
+                /*do
+                {
+                    //new PEPackets(PEPackets.TOCLIENT_LoginStatusPacket, new object[] { 0 }, sendsocket, RemoteIP);
+
+                    //connsocket[1] = new Socket(SocketType.Stream, ProtocolType.Tcp); //We still need to connect to the server
+                    //((Socket)connsocket[1]).Connect("localhost", Form1.PortNumber);
+
+                    //After login loop to receive all messages
+                } while (false);*/
             }
-            else
-            {
-                
-            }
+            Program.ConnThreads.Remove(RemoteIP);
+        }
+        /*private bool done = false;
+        void saea_Completed(object sender, SocketAsyncEventArgs e)
+        {
+            done = true;
+        }*/
+        public void SendData(object data)
+        {
+            
         }
     }
     class ServerConnectionThread
     {
         public void Run(object sckt)
         {
-            Thread.CurrentThread.Name = "ConnectionThread";
-            Form1.Threads.Add(Thread.CurrentThread);
-            object connsocket;
-            if (!Form1.PEVersion)
-                connsocket = ((object[])sckt)[0] as Socket;
-            else
-                connsocket = ((UdpClient)((object[])sckt)[0]);
-            //var serversock = new Socket(SocketType.Stream, ProtocolType.Tcp);
-            //serversock.Connect("localhost", Form1.PortNumber);
-            //while (connsocket.Available > 0)
+            Thread.CurrentThread.Name = "ServerConnectionThread";
+            //Form1.Threads.Add(Thread.CurrentThread);
+            /*object connsocket;
+            connsocket = ((UdpClient)((object[])sckt)[0]);
             var serversock = ((Socket)((object[])sckt)[1]);
-            //new NetworkStream(connsocket).CopyToAsync(new NetworkStream(serversock));
-            try
-            {
-                if (!Form1.PEVersion)
-                    new NetworkStream(serversock).CopyTo(new NetworkStream(connsocket as Socket));
-                
-                /*var nsc = new NetworkStream(connsocket);
-                var nss = new NetworkStream(serversock);
-                var tr = new BinaryTagReader(nss, NbtOptions.None);
-                var tw = new BinaryTagWriter(nsc, NbtOptions.None);
-                byte[] ba;
-                while (!tr.ReadString().Contains("Blocks"))
-                {
-                    nss.CopyTo(nsc);
-                }
-                ba = tr.ReadByteArray();
-                Console.WriteLine("Byte array: " + ba);
-                for (int i = 0; i < ba.Length; i++)
-                    tw.Write(ba[i]);*/
-            }
-            catch
-            {
-
-            }
             (connsocket as Socket).Close();
-            serversock.Close();
+            serversock.Close();*/
         }
     }
 }
