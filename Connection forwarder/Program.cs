@@ -14,12 +14,9 @@ namespace Connection_forwarder
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
-        [STAThread]
         static void Main()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            Console.WriteLine(":P");
         }
         public static IPAddress GetLocalIP()
         {
@@ -35,10 +32,5 @@ namespace Connection_forwarder
             }
             return localIP;
         }
-        /// <summary>
-        //// Int64: ClientID
-        /// IP
-        /// </summary>
-        public static Dictionary<IPEndPoint, Object[]> ConnThreads = new Dictionary<IPEndPoint, Object[]>();
     }
 }
